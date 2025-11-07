@@ -1,0 +1,10 @@
+[16-Sep-2025 08:45:24 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 8.0.30. in /home/cambodiaalumni/public_html/api.cambodiaalumni.org/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home/cambodiaalumni/public_html/api.cambodiaalumni.org/vendor/composer/autoload_real.php(25): require()
+#1 /home/cambodiaalumni/public_html/api.cambodiaalumni.org/vendor/autoload.php(22): ComposerAutoloaderInit5b80f32d9c315660427d6f015c8a7327::getLoader()
+#2 /home/cambodiaalumni/public_html/api.cambodiaalumni.org/public/index.php(34): require('/home/cambodiaa...')
+#3 {main}
+  thrown in /home/cambodiaalumni/public_html/api.cambodiaalumni.org/vendor/composer/platform_check.php on line 22
+[14-Oct-2025 14:56:13 Asia/Phnom_Penh] PHP Fatal error:  Cannot declare class App\Http\Controllers\AdminController\MemberController, because the name is already in use in /home/cambodiaalumni/public_html/api.cambodiaalumni.org/app/Http/Controllers/AdminController/MemberInformationController.php on line 13
+[14-Oct-2025 14:56:28 Asia/Phnom_Penh] PHP Fatal error:  Cannot declare class App\Http\Controllers\AdminController\MemberController, because the name is already in use in /home/cambodiaalumni/public_html/api.cambodiaalumni.org/app/Http/Controllers/AdminController/MemberInformationController.php on line 13
+[14-Oct-2025 14:56:41 Asia/Phnom_Penh] PHP Fatal error:  Cannot declare class App\Http\Controllers\AdminController\MemberController, because the name is already in use in /home/cambodiaalumni/public_html/api.cambodiaalumni.org/app/Http/Controllers/AdminController/MemberInformationController.php on line 13
