@@ -52,6 +52,7 @@ class HomepageController extends Controller
         $page = SiteSetting::where("type", "HOME_PAGE")->first();
         $content = json_decode($page->content);
         return response()->json([
+            "titleBar" => $lang == "KHM" ? ($content->titleBarKh ? $content->titleBarKh : $content->titleBar) : ($lang == "CH" ? ($content->titleBarCh ? $content->titleBarCh : $content->titleBar) : $content->titleBar),
             "subtitle" => $lang == "KHM" ? ($content->subtitleKh ? $content->subtitleKh : $content->subtitle) : ($lang == "CH" ? ($content->subtitleCh ? $content->subtitleCh : $content->subtitle) : $content->subtitle),
             "title" => $lang == "KHM" ? ($content->titleKh ? $content->titleKh : $content->title) : ($lang == "CH" ? ($content->titleCh ? $content->titleCh : $content->title) : $content->title),
             "des" => $lang == "KHM" ? ($content->desKh ? $content->desKh : $content->des) : ($lang == "CH" ? ($content->desCh ? $content->desCh : $content->des) : $content->des),
