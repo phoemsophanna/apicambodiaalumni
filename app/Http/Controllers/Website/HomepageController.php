@@ -108,6 +108,7 @@ class HomepageController extends Controller
             ->where("id", "!=", $news->id)
             ->select("id", "title", "titleKh", "titleCh", "image", "summary", "summaryKh", "summaryCh", "type", "date")
             ->orderBy("ordering", "asc")
+            ->limit(3)
             ->get();
 
         $newsList->each(function ($query) use ($lang) {
