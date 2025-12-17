@@ -46,8 +46,9 @@ class DonationController extends Controller
         $donor->each(function($q) {
             $q['user'] = User::where("id", $q->donorId)->first();
         });
+        $total = Donation::sum('amount');
 
-        return response()->json($donor);
+        return response()->json(["donors" => $donor, "total" => $total]);
     }
 
     public function donation(Request $request)
