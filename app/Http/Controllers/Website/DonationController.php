@@ -42,7 +42,7 @@ class DonationController extends Controller
     }
 
     public function donorList() {
-        $donor = Donation::get();
+        $donor = Donation::orderby('id','desc')->get();
         $donor->each(function($q) {
             $q['user'] = User::where("id", $q->donorId)->first();
         });
