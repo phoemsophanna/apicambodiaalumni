@@ -41,6 +41,15 @@ class DonationController extends Controller
         return response()->json($donors);
     }
 
+    public function donorList() {
+        $donor = Donation::get();
+        $donor->each(function($q) {
+            $q['user'] = User::where("id", $q->donorId)->first();
+        });
+
+        return response()->json($donor);
+    }
+
     public function donation(Request $request)
     {
         $item = [

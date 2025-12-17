@@ -189,6 +189,7 @@ Route::post("/save-content-image", [FileStorageController::class, "uploadContent
 Route::delete("/save-image/{dir}", [FileStorageController::class, "deleteImage"]);
 Route::get("/save-image/{dir}", [FileStorageController::class, "previewImage"]);
 
+Route::get("/donor-lists", [DonationController::class, "donorList"]);
 
 // Website Public
 Route::prefix('/web')->group(function () {
