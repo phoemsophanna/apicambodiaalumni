@@ -55,6 +55,7 @@ class DonationController extends Controller
         $donor = Donation::where("donorId", $id)->orderBy('id','desc')->get();
         $donor->each(function($q) {
             $q->campaign = $q->campaign ? $q->campaign : [];
+            $q->date = Carbon::parse($q->donationDate)->format("d-m-Y");
         });
         $total = Donation::where("donorId", $id)->sum('amount');
 
