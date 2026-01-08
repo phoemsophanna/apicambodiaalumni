@@ -272,7 +272,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'withdraw'], function () {
 });
 
 Route::group(['middleware' => 'auth:api', 'prefix' => 'user-donation'], function () {
-    Route::post("/donorlist/{id}", [Website\DonationController::class, "requestWithdraw"]);
+    Route::get("/donorlist/{id}", [Website\DonationController::class, "requestWithdraw"]);
 });
 
 
