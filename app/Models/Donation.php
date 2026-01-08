@@ -20,4 +20,8 @@ class Donation extends Model
         "isConfirmAgreement",
         "donationDate"
     ];
+
+    public function campaign() {
+        return $this->belongsTo(Campaign::class, "campaignId", "id");
+    }
 }

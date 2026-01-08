@@ -51,6 +51,16 @@ class DonationController extends Controller
         return response()->json(["donors" => $donor, "total" => $total]);
     }
 
+    public function donorListUser($id) {
+        $donor = Donation::where("donorId", $id)->orderBy('id','desc')->get();
+        $donor->each(function($q) {
+            $q->campaign = $q->campaign ? $q->campaign : [];
+        });
+        $total = Donation::where("donorId", $id)->sum('amount');
+
+        return response()->json(["donors" => $donor, "total" => $total]);
+    }
+
     public function donation(Request $request)
     {
         $item = [

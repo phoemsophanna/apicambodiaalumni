@@ -270,3 +270,9 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'withdraw'], function () {
     Route::post("/", [Website\Dashboard\WithdrawController::class, "requestWithdraw"]);
     Route::get("/histories", [Website\Dashboard\WithdrawController::class, "index"]);
 });
+
+Route::group(['middleware' => 'auth:api', 'prefix' => 'user-donation'], function () {
+    Route::post("/donorlist/{id}", [Website\DonationController::class, "requestWithdraw"]);
+});
+
+
