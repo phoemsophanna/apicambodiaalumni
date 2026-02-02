@@ -99,7 +99,14 @@ class DonationController extends Controller
                     "publishedAt" => Carbon::now()
                 ]);
             }
-            $this->sentNotification($item, $user. $campaign);
+            $notification = $this->sentNotification($item, $user. $campaign);
+            if(!$notification->status){
+                return response()->json([
+                    "message" => "Sent Notification Fail",
+                    "error" => $notification->message,
+                    "status" => "fail"
+                ], 200);
+            }
         } catch (Exception $th) {
             Log::info("Donation Fail", $th);
             return response()->json([
@@ -156,7 +163,9 @@ class DonationController extends Controller
 
             curl_close($curl);
         } catch (Exception $th) {
-            Log::error($th->getMessage(), $th);
+            // Log::error($th->getMessage(), $th);
+            return (object)['message' => $th->getMessage(), "status" => false];
         }
+        return (object)["status" => true];
     }
 }
