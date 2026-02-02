@@ -146,7 +146,7 @@ class DonationController extends Controller
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => array(
-                    'chat_id' => '-5148085853',
+                    'chat_id' => '-1003584798129',
                     'text' => '<b>Donation:</b>
 <b><u>Project:</u></b> ' . ($campaign ? $campaign['campaignTile'] : '') . '
 <b><u>Donor Info:</u></b>
