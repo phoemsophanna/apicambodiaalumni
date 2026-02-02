@@ -141,7 +141,7 @@ class DonationController extends Controller
                 CURLOPT_POSTFIELDS => array(
                     'chat_id' => '-5148085853',
                     'text' => '<b>Donation:</b>
-                    <b><u>Project: ' . ($campaign ? $campaign->campaignTile : "") . '</u></b>
+                    <b><u>Project:</u></b> ' . ($campaign ? htmlspecialchars($campaign->campaignTile) : '') . "\n\n" . '
 <b><u>Donor Info:</u></b>
 <code>' . ($user ? $user['name'] : "Anonymous") . '</code>
 <code>' . ($user ? $user['phoneNumber'] : "") . '</code>
