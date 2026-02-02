@@ -147,14 +147,14 @@ class DonationController extends Controller
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => array(
                     'chat_id' => '-5148085853',
-                    'text' => '<b>Donation:</b>
-                    <b><u>Project:</u></b> ' . ($campaign ? $campaign['campaignTile'] : '') . "\n" . '
+                    'text' => '<b>Donation:</b>'."\n".'
+                    <b><u>Project:</u></b> ' . ($campaign ? $campaign['campaignTile'] : '') . '
 <b><u>Donor Info:</u></b>
 <code>' . ($user ? $user['name'] : "Anonymous") . '</code>
 <code>' . ($user ? $user['phoneNumber'] : "") . '</code>
 <b>Payment Method:</b> <u>' . $item['paymentMethod'] . '</u> ' . '
 <b>Amount:</b> <u>' . number_format($item['total'], 2, '.') . '</u> ' . '
-<b><u>Note:</u></b> ' . $item['note'],
+<b><u>Note:</u></b> ' . "\n" . $item['note'],
                     'parse_mode' => 'HTML'
                 ),
             ));
