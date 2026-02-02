@@ -98,6 +98,7 @@ class DonationController extends Controller
                     "donationId" => $donation->id,
                     "publishedAt" => Carbon::now()
                 ]);
+                $this->sentNotification($item, $user);
             }
         } catch (Exception $th) {
             Log::info("Donation Fail", $th);
@@ -122,5 +123,39 @@ class DonationController extends Controller
         });
 
         return response()->json($donations->items());
+    }
+
+    private static function sentNotification($item, $user) {
+        try {
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "https://api.telegram.org/bot8590989809:AAEuh7sDgw5alUoQv76QzdOfYbJ2BCqGITo/sendMessage",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => array(
+                    'chat_id' => '-5148085853',
+                    'text' => '<b>Donation:</b>
+<b><u>Donor Info:</u></b>
+<code>' . $user['name'] . '</code>
+<code>' . $user['phoneNumber'] . '</code>
+<b>Payment Method:</b> <u>' . $item['paymentMethod'] . '</u> ' . '
+<b>Amount:</b> <u>' . number_format($item['total'], 2, '.') . '</u> ' . '
+<b><u>Note:</u></b> ' . $item['note'],
+                    'parse_mode' => 'HTML'
+                ),
+            ));
+
+            curl_exec($curl);
+
+            curl_close($curl);
+        } catch (Exception $th) {
+            Log::error($th->getMessage(), $th);
+        }
     }
 }
