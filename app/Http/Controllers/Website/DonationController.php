@@ -99,7 +99,7 @@ class DonationController extends Controller
                     "publishedAt" => Carbon::now()
                 ]);
             }
-            $this->sentNotification($item, $user);
+            $this->sentNotification($item, $user. $campaign);
         } catch (Exception $th) {
             Log::info("Donation Fail", $th);
             return response()->json([
@@ -125,7 +125,7 @@ class DonationController extends Controller
         return response()->json($donations->items());
     }
 
-    private static function sentNotification($item, $user = null) {
+    private static function sentNotification($item, $user = null, $campaign = null) {
         try {
             $curl = curl_init();
 
@@ -141,6 +141,7 @@ class DonationController extends Controller
                 CURLOPT_POSTFIELDS => array(
                     'chat_id' => '-5148085853',
                     'text' => '<b>Donation:</b>
+                    <b><u>Project: ' . ($campaign ? $campaign->campaignTile : "") . '</u></b>
 <b><u>Donor Info:</u></b>
 <code>' . ($user ? $user['name'] : "Anonymous") . '</code>
 <code>' . ($user ? $user['phoneNumber'] : "") . '</code>
