@@ -99,7 +99,7 @@ class DonationController extends Controller
                     "publishedAt" => Carbon::now()
                 ]);
             }
-            $notification = $this->sentNotification($item, $user. $campaign);
+            $notification = $this->sentNotification($item, $user, $campaign);
             if(!$notification->status){
                 return response()->json([
                     "message" => "Sent Notification Fail",
