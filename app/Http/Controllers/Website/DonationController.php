@@ -65,7 +65,7 @@ class DonationController extends Controller
     public function donation(Request $request)
     {
         $item = [
-            "campaignId" => request("campaignId", null),
+            "campaignId" => request("campaignId", 0),
             "donorId" => auth() ? auth()->id() : null,
             "donateType" => request("donateType", null),
             "amount" => request("amount", 0),
@@ -80,12 +80,14 @@ class DonationController extends Controller
         try {
             $donation = Donation::create($item);
             $campaign = Campaign::where("id", $request->campaignId)->first();
-            Campaign::where("id", $request->campaignId)->update([
-                "totalTip" => $campaign->totalTip + $item["tip"],
-                "totalRaised" => $campaign->totalRaised + $item["amount"],
-                "balance" => $campaign->balance + $item["amount"],
-                "totalDonation" => $campaign->totalDonation + 1
-            ]);
+            if($campaign){
+                Campaign::where("id", $request->campaignId)->update([
+                    "totalTip" => $campaign->totalTip + $item["tip"],
+                    "totalRaised" => $campaign->totalRaised + $item["amount"],
+                    "balance" => $campaign->balance + $item["amount"],
+                    "totalDonation" => $campaign->totalDonation + 1
+                ]);
+            }
             $user = User::where("id", $item["donorId"])->first();
             if($user) {
                 User::where("id", $item["donorId"])->update([
@@ -94,7 +96,7 @@ class DonationController extends Controller
                 Feed::create([
                     "creatorId" => $user->id,
                     "feedType" => "DONATION",
-                    "campaignId" => $request->campaignId,
+                    "campaignId" => $request->campaignId ? $request->campaignId : 0,
                     "donationId" => $donation->id,
                     "publishedAt" => Carbon::now()
                 ]);
@@ -148,7 +150,7 @@ class DonationController extends Controller
                 CURLOPT_POSTFIELDS => array(
                     'chat_id' => '-1003584798129',
                     'text' => '<b>Donation:</b>
-<b><u>Project:</u></b> ' . ($campaign ? $campaign['campaignTile'] : '') . '
+' . ($campaign ? '<b><u>Project:</u></b> ' . $campaign['campaignTile'] : '') . '
 <b><u>Donor Info:</u></b>
 <code>' . ($user ? $user['name'] : "Anonymous") . '</code>
 <code>' . ($user ? $user['phoneNumber'] : "") . '</code>
