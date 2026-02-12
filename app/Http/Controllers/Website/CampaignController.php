@@ -84,8 +84,8 @@ class CampaignController extends Controller
     public function homeCampaign(Request $request)
     {
         $lang = $request->header("Accept-Language");
-        $inNeedCampaign = Campaign::select("id", "campaignTile", "campaignTileKm", "campaignTileCh", "involvement", "involvementKm", "involvementCh", "goal", "totalRaised", "campaignGallery")->where("isInNeed", true)->where("isActive", true)->where("status", "COMPLETE")->orderBy("id", "ASC")->first();
-        $inNeedCampaign->campaignGallery = json_decode($inNeedCampaign->campaignGallery);
+        $inNeedCampaign = Campaign::select("id", "campaignTile", "campaignTileKm", "campaignTileCh", "involvement", "involvementKm", "involvementCh", "goal", "totalRaised", "campaignGallery")->where("isInNeed", true)->where("isActive", 1)->where("status", "COMPLETE")->orderBy("id", "ASC")->first();
+        $inNeedCampaign->campaignGallery = json_decode($inNeedCampaign->campaignGallery ? $inNeedCampaign->campaignGallery : "[]");
         $inNeedCampaign->campaignTile = $lang == "KHM" ? ($inNeedCampaign->campaignTileKm ?: $inNeedCampaign->campaignTile) : ($lang == "CH" ? ($inNeedCampaign->campaignTileCh ? $inNeedCampaign->campaignTileCh : $inNeedCampaign->campaignTile) : $inNeedCampaign->campaignTile);
         $inNeedCampaign->involvement = $lang == "KHM" ? ($inNeedCampaign->involvementKm ?: $inNeedCampaign->involvement) : ($lang == "CH" ? ($inNeedCampaign->involvementCh ? $inNeedCampaign->involvementCh : $inNeedCampaign->involvement) : $inNeedCampaign->involvement);
         $inNeedCampaign->makeHidden(["campaignTileKm", "involvementKm"]);
@@ -96,7 +96,7 @@ class CampaignController extends Controller
             $query->involvement = $lang == "KHM" ? ($query->involvementKm ?: $query->involvement) : ($lang == "CH" ? ($query->involvementCh ? $query->involvementCh : $query->involvement) : $query->involvement);
             $query->makeHidden(["campaignTileKm", "involvementKm"]);
 
-            $query->campaignGallery = json_decode($query->campaignGallery);
+            $query->campaignGallery = json_decode($query->campaignGallery ? $query->campaignGallery : "[]");
             $category = CampaignCategory::select("id", "name", "nameKh", "nameCh")->where("id", $query->campaignCategoryId)->first();
             if ($category) {
                 $category->name = $lang == "KHM" ? ($category->nameKh ?: $category->name) : ($lang == "CH" ? ($category->nameCh ? $category->nameCh : $category->name) : $category->name);
