@@ -90,7 +90,7 @@ class MemberController extends Controller
     public function show(Request $request)
     {
         $model = User::findOrFail($request->id);
-        $campaignList = Campaign::where("creatorId", $request->id)->get();
+        $campaignList = Campaign::where("creatorId", $request->id)->where("isActive", 1)->get();
         $model['info'] = UserInformation::where('user_id',$request->id)->first();
         $model["campaignCount"] = $campaignList->count();
         $model["totalRaised"] = $campaignList->sum("totalRaised");

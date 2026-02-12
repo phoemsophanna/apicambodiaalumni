@@ -38,7 +38,7 @@ class HomepageController extends Controller
             return CampaignCategory::select("id", "name", "nameKh", "nameCh", "desc", "descKh", "descCh", "image", "thumbnail")->orderBy("ordering", "ASC")->where("isDisplayHomePage", true)->where("isActive", true)->get();
         });
         $categories->each(function($query) use ($lang) {
-            $query->countProject = Campaign::where("status", "COMPLETE")->where("campaignCategoryId", $query->id)->count();
+            $query->countProject = Campaign::where("status", "COMPLETE")->where("isActive", true)->where("campaignCategoryId", $query->id)->count();
             $query->name = $lang == "KHM" ? ($query->nameKh ?: $query->name) : ($lang == "CH" ? ($query->nameCh ? $query->nameCh : $query->name) : $query->name);
             $query->desc = $lang == "KHM" ? ($query->descKh ?: $query->desc) : ($lang == "CH" ? ($query->descCh ? $query->descCh : $query->desc) : $query->desc);
         });

@@ -84,13 +84,13 @@ class CampaignController extends Controller
     public function homeCampaign(Request $request)
     {
         $lang = $request->header("Accept-Language");
-        $inNeedCampaign = Campaign::select("id", "campaignTile", "campaignTileKm", "campaignTileCh", "involvement", "involvementKm", "involvementCh", "goal", "totalRaised", "campaignGallery")->where("isInNeed", true)->where("status", "COMPLETE")->orderBy("id", "ASC")->first();
+        $inNeedCampaign = Campaign::select("id", "campaignTile", "campaignTileKm", "campaignTileCh", "involvement", "involvementKm", "involvementCh", "goal", "totalRaised", "campaignGallery")->where("isInNeed", true)->where("isActive", true)->where("status", "COMPLETE")->orderBy("id", "ASC")->first();
         $inNeedCampaign->campaignGallery = json_decode($inNeedCampaign->campaignGallery);
         $inNeedCampaign->campaignTile = $lang == "KHM" ? ($inNeedCampaign->campaignTileKm ?: $inNeedCampaign->campaignTile) : ($lang == "CH" ? ($inNeedCampaign->campaignTileCh ? $inNeedCampaign->campaignTileCh : $inNeedCampaign->campaignTile) : $inNeedCampaign->campaignTile);
         $inNeedCampaign->involvement = $lang == "KHM" ? ($inNeedCampaign->involvementKm ?: $inNeedCampaign->involvement) : ($lang == "CH" ? ($inNeedCampaign->involvementCh ? $inNeedCampaign->involvementCh : $inNeedCampaign->involvement) : $inNeedCampaign->involvement);
         $inNeedCampaign->makeHidden(["campaignTileKm", "involvementKm"]);
 
-        $isLatest = Campaign::where("isLatest", true)->where("status", "COMPLETE")->orderBy("created_at", "DESC")->limit(9)->get();
+        $isLatest = Campaign::where("isLatest", true)->where("isActive",1)->where("status", "COMPLETE")->orderBy("created_at", "DESC")->limit(9)->get();
         $isLatest->each(function ($query) use ($lang) {
             $query->campaignTile = $lang == "KHM" ? ($query->campaignTileKm ?: $query->campaignTile) : ($lang == "CH" ? ($query->campaignTileCh ? $query->campaignTileCh : $query->campaignTile) : $query->campaignTile);
             $query->involvement = $lang == "KHM" ? ($query->involvementKm ?: $query->involvement) : ($lang == "CH" ? ($query->involvementCh ? $query->involvementCh : $query->involvement) : $query->involvement);
@@ -125,7 +125,7 @@ class CampaignController extends Controller
         $category = $request->category;
         $orderBy = request("sortBy", "");
 
-        $campaignList = Campaign::select("id", "campaignTile", "campaignTileKm", "campaignTileCh", "involvement", "involvementKm", "involvementCh", "campaignGallery", "goal", "totalRaised")->where("status", "COMPLETE")->when($location, function ($query) use ($location) {
+        $campaignList = Campaign::select("id", "campaignTile", "campaignTileKm", "campaignTileCh", "involvement", "involvementKm", "involvementCh", "campaignGallery", "goal", "totalRaised")->where("isActive", true)->where("status", "COMPLETE")->when($location, function ($query) use ($location) {
             $query->where("city", "like", "%" . $location . "%");
         })->when($organization, function ($query) use ($organization) {
             $query->where("creatorId", $organization);
@@ -134,7 +134,7 @@ class CampaignController extends Controller
         })->inRandomOrder()->get();
 
         if ($orderBy == "ending") {
-            $campaignList = Campaign::select("id", "campaignTile", "campaignTileKm", "campaignTileCh", "involvement", "involvementKm", "involvementCh", "campaignGallery", "goal", "totalRaised")->where("status", "COMPLETE")->when($location, function ($query) use ($location) {
+            $campaignList = Campaign::select("id", "campaignTile", "campaignTileKm", "campaignTileCh", "involvement", "involvementKm", "involvementCh", "campaignGallery", "goal", "totalRaised")->where("isActive", true)->where("status", "COMPLETE")->when($location, function ($query) use ($location) {
                 $query->where("city", "like", "%" . $location . "%");
             })->when($organization, function ($query) use ($organization) {
                 $query->where("creatorId", $organization);
@@ -144,7 +144,7 @@ class CampaignController extends Controller
         }
 
         if ($orderBy == "trending") {
-            $campaignList = Campaign::select("id", "campaignTile", "campaignTileKm",  "campaignTileCh", "involvement", "involvementKm", "involvementCh", "campaignGallery", "goal", "totalRaised")->where("status", "COMPLETE")->when($location, function ($query) use ($location) {
+            $campaignList = Campaign::select("id", "campaignTile", "campaignTileKm",  "campaignTileCh", "involvement", "involvementKm", "involvementCh", "campaignGallery", "goal", "totalRaised")->where("isActive", true)->where("status", "COMPLETE")->when($location, function ($query) use ($location) {
                 $query->where("city", "like", "%" . $location . "%");
             })->when($organization, function ($query) use ($organization) {
                 $query->where("creatorId", $organization);
@@ -182,7 +182,7 @@ class CampaignController extends Controller
     public function projectCampaignIdPaths(Request $request)
     {
         $campaignList = Cache::remember('campaigns.id', 120, function () {
-            return Campaign::where("status", "COMPLETE")->select("id")->get();
+            return Campaign::where("status", "COMPLETE")->where("isActive", true)->select("id")->get();
         });
 
         return response()->json([
@@ -193,7 +193,7 @@ class CampaignController extends Controller
     public function dropdown()
     {
         $organizations = User::select("id", "name", "image")->where("memberType", "ORGANIZATION")->orderBy("created_at", "DESC")->get();
-        $location = Campaign::select("city")->distinct()->get();
+        $location = Campaign::select("city")->where("isActive", true)->distinct()->get();
         return response()->json([
             "organizations" => $organizations,
             "location" => $location

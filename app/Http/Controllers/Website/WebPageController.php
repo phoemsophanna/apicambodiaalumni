@@ -71,7 +71,7 @@ class WebPageController extends Controller
         if($query != null || $query != "") {
             $campaign = Campaign::where(function($cam) use ($query) {
                 $cam->where("campaignTile", "like", "%$query%");
-            })->where("status", "COMPLETE")->get();
+            })->where("status", "COMPLETE")->where("isActive", true)->get();
             foreach($campaign as $cam) {
                 $campaignGallery = json_decode($cam->campaignGallery);
                 array_push($responseArr, ["id" => $cam->id, "title" => $cam->campaignTile, "image" => count($campaignGallery) > 0 ? $campaignGallery[0] : null, "type" => "campaign"]); 

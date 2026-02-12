@@ -19,7 +19,7 @@ class CampaignController extends Controller
         $lang = $request->header("Accept-Language");
         $categories = CampaignCategory::select("id", "name", "nameKh", "image")->orderBy("ordering", "ASC")->where("isActive", true)->get();
         $categories->each(function($query) use ($lang) {
-            $query->countProject = Campaign::where("status", "COMPLETE")->where("campaignCategoryId", $query->id)->count();
+            $query->countProject = Campaign::where("status", "COMPLETE")->where("isActive", true)->where("campaignCategoryId", $query->id)->count();
             $query->name = $lang == "KHM" ? ($query->nameKh ?: $query->name) : $query->name;
         });
         return response()->json([
@@ -35,7 +35,7 @@ class CampaignController extends Controller
     public function index(Request $request)
     {
         $status = request("status", null);
-        $data = Campaign::where("creatorId", auth()->id())->when($status, function($query) use ($status) {
+        $data = Campaign::where("creatorId", auth()->id())->where("isActive", true)->when($status, function($query) use ($status) {
             $query->where("status", $status);
         })->orderBy('id', 'desc')->get();
 
@@ -50,16 +50,16 @@ class CampaignController extends Controller
             'status' => 'success',
             'data' => $data,
             'record' => [
-                "totalCampaign" => Campaign::where("creatorId", auth()->id())->count(),
-                "totalRaised" => Campaign::where("creatorId", auth()->id())->sum("totalRaised"),
-                "totalDonation" => Campaign::where("creatorId", auth()->id())->sum("totalDonation"),
-                "pending" => Campaign::where("creatorId", auth()->id())->where("status", "PENDING")->count(),
-                "draft" => Campaign::where("creatorId", auth()->id())->where("status", "DRAFT")->count(),
-                "complete" => Campaign::where("creatorId", auth()->id())->where("status", "COMPLETE")->count(),
-                "inactive" => Campaign::where("creatorId", auth()->id())->where("status", "INACTIVE")->count(),
-                "reject" => Campaign::where("creatorId", auth()->id())->where("status", "REJECT")->count(),
-                "fail" => Campaign::where("creatorId", auth()->id())->where("status", "FAIL")->count(),
-                "total" => Campaign::where("creatorId", auth()->id())->count(),
+                "totalCampaign" => Campaign::where("creatorId", auth()->id())->where("isActive", true)->count(),
+                "totalRaised" => Campaign::where("creatorId", auth()->id())->where("isActive", true)->sum("totalRaised"),
+                "totalDonation" => Campaign::where("creatorId", auth()->id())->where("isActive", true)->sum("totalDonation"),
+                "pending" => Campaign::where("creatorId", auth()->id())->where("isActive", true)->where("status", "PENDING")->count(),
+                "draft" => Campaign::where("creatorId", auth()->id())->where("isActive", true)->where("status", "DRAFT")->count(),
+                "complete" => Campaign::where("creatorId", auth()->id())->where("isActive", true)->where("status", "COMPLETE")->count(),
+                "inactive" => Campaign::where("creatorId", auth()->id())->where("isActive", true)->where("status", "INACTIVE")->count(),
+                "reject" => Campaign::where("creatorId", auth()->id())->where("isActive", true)->where("status", "REJECT")->count(),
+                "fail" => Campaign::where("creatorId", auth()->id())->where("isActive", true)->where("status", "FAIL")->count(),
+                "total" => Campaign::where("creatorId", auth()->id())->where("isActive", true)->count(),
             ]
         ], 200);
     }
