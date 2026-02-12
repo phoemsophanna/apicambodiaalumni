@@ -225,12 +225,14 @@ class CampaignController extends Controller
      */
     public function destroy(string $id)
     {
-        $model = Campaign::findOrFail($id);
-        $model->delete();
-        return response()->json([
-            'message' => 'Delete successfully.',
-            'status' => 'success'
-        ], 200);
+        if ($id != 15) {
+            $model = Campaign::findOrFail($id);
+            $model->delete();
+            return response()->json([
+                'message' => 'Delete successfully.',
+                'status' => 'success'
+            ], 200);
+        }
     }
 
     private function _onSave($id, $data)
