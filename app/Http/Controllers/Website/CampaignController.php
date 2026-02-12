@@ -75,7 +75,7 @@ class CampaignController extends Controller
     }
 
     public function getMainCampaign(){
-        $inNeedCampaign = Campaign::select("id")->where("isInNeed", true)->where("status", "COMPLETE")->orderBy("id", "ASC")->first();
+        $inNeedCampaign = Campaign::select("id")->where("isInNeed", true)->where("status", "COMPLETE")->orderBy("ordering", "desc")->first();
         return response()->json([
             'item' => $inNeedCampaign
         ]);
