@@ -85,10 +85,12 @@ class CampaignController extends Controller
     {
         $lang = $request->header("Accept-Language");
         $inNeedCampaign = Campaign::select("id", "campaignTile", "campaignTileKm", "campaignTileCh", "involvement", "involvementKm", "involvementCh", "goal", "totalRaised", "campaignGallery")->where("isInNeed", true)->where("isActive", 1)->where("status", "COMPLETE")->orderBy("ordering", "ASC")->first();
-        $inNeedCampaign->campaignGallery = $inNeedCampaign->campaignGallery ? json_decode($inNeedCampaign->campaignGallery) : [];
-        $inNeedCampaign->campaignTile = $lang == "KHM" ? ($inNeedCampaign->campaignTileKm ?: $inNeedCampaign->campaignTile) : ($lang == "CH" ? ($inNeedCampaign->campaignTileCh ? $inNeedCampaign->campaignTileCh : $inNeedCampaign->campaignTile) : $inNeedCampaign->campaignTile);
-        $inNeedCampaign->involvement = $lang == "KHM" ? ($inNeedCampaign->involvementKm ?: $inNeedCampaign->involvement) : ($lang == "CH" ? ($inNeedCampaign->involvementCh ? $inNeedCampaign->involvementCh : $inNeedCampaign->involvement) : $inNeedCampaign->involvement);
-        $inNeedCampaign->makeHidden(["campaignTileKm", "involvementKm"]);
+        if($inNeedCampaign) {
+            $inNeedCampaign->campaignGallery = $inNeedCampaign->campaignGallery ? json_decode($inNeedCampaign->campaignGallery) : [];
+            $inNeedCampaign->campaignTile = $lang == "KHM" ? ($inNeedCampaign->campaignTileKm ?: $inNeedCampaign->campaignTile) : ($lang == "CH" ? ($inNeedCampaign->campaignTileCh ? $inNeedCampaign->campaignTileCh : $inNeedCampaign->campaignTile) : $inNeedCampaign->campaignTile);
+            $inNeedCampaign->involvement = $lang == "KHM" ? ($inNeedCampaign->involvementKm ?: $inNeedCampaign->involvement) : ($lang == "CH" ? ($inNeedCampaign->involvementCh ? $inNeedCampaign->involvementCh : $inNeedCampaign->involvement) : $inNeedCampaign->involvement);
+            $inNeedCampaign->makeHidden(["campaignTileKm", "involvementKm"]);
+        }
 
         $isLatest = Campaign::where("isLatest", true)->where("isActive",1)->where("status", "COMPLETE")->orderBy("created_at", "DESC")->limit(9)->get();
         $isLatest->each(function ($query) use ($lang) {
