@@ -31,7 +31,7 @@ class PaymentController extends Controller
             'payment_option' => $payment_option,
             'returnUrl' => $return_url,
             'continue_success_url' => $continue_success_url,
-            
+            'view_type' => 'popup'
         ];
     }
 }
