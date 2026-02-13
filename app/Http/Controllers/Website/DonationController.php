@@ -64,6 +64,14 @@ class DonationController extends Controller
 
     public function donation(Request $request)
     {
+        $transactionId = 'PAID' . round(microtime(true) * 1000);
+        $req_time = round(microtime(true) * 1000);
+        $amount = number_format(request("total", 0), 2, '.');
+        $firstName = request("firstName", '');
+        $lastName = request("lastName", '');
+        $phone = request("receiverPhone", "");
+        $payment_option = $request->paymentOption; #abapay_khqr, cards
+
         $item = [
             "campaignId" => request("campaignId", 0),
             "donorId" => auth() ? auth()->id() : null,
@@ -74,41 +82,28 @@ class DonationController extends Controller
             "paymentMethod" => request("paymentMethod", null),
             "note" => request("note", null),
             "isConfirmAgreement" => request("isConfirmAgreement", false),
-            "donationDate" => Carbon::now()
+            "donationDate" => Carbon::now(),
+            "paymentStatus" => "DRAFT",
+            "transactionId" => $transactionId,
+            "requestTime" => $req_time
         ];
 
         try {
             $donation = Donation::create($item);
-            $campaign = Campaign::where("id", $request->campaignId)->first();
-            if($campaign){
-                Campaign::where("id", $request->campaignId)->update([
-                    "totalTip" => $campaign->totalTip + $item["tip"],
-                    "totalRaised" => $campaign->totalRaised + $item["amount"],
-                    "balance" => $campaign->balance + $item["amount"],
-                    "totalDonation" => $campaign->totalDonation + 1
-                ]);
-            }
-            $user = User::where("id", $item["donorId"])->first();
-            if($user) {
-                User::where("id", $item["donorId"])->update([
-                    "totalDonation" => $user->totalDonation + ($item["tip"] + $item["amount"])
-                ]);
-                Feed::create([
-                    "creatorId" => $user->id,
-                    "feedType" => "DONATION",
-                    "campaignId" => $request->campaignId ? $request->campaignId : 0,
-                    "donationId" => $donation->id,
-                    "publishedAt" => Carbon::now()
-                ]);
-            }
-            $notification = $this->sentNotification($item, $user, $campaign);
-            if(!$notification->status){
-                return response()->json([
-                    "message" => "Sent Notification Fail",
-                    "error" => $notification->message,
-                    "status" => "fail"
-                ], 200);
-            }
+
+            $data = PaymentController::generatePaymentResponse(
+                $req_time,
+                $transactionId,
+                $amount,
+                "USD",
+                $firstName,
+                $lastName,
+                null,
+                $phone,
+                $payment_option,
+                base64_encode('https://api.cambodiaalumni.org/api/web/update-donation/' . $transactionId),
+                'https://cambodiaalumni.org/'
+            );
         } catch (Exception $th) {
             Log::info("Donation Fail", $th);
             return response()->json([
@@ -119,8 +114,60 @@ class DonationController extends Controller
 
         return response()->json([
             "message" => "Donation Successfully!",
-            "status" => "success"
+            "status" => "success",
+            "data" => $data,
         ], 200);
+    }
+
+    public function checkOrder($transactionId)
+    {
+        try {
+            DB::transaction(function () use ($transactionId) {
+                $donation = Donation::where('transactionId', $transactionId)->where("paymentStatus", "!=", "APPROVED")->first();
+                if ($donation) {
+                    $donation->paymentStatus = "APPROVED";
+                    $donation->save();
+
+                    $campaign = Campaign::where("id", $donation->campaignId)->first();
+                    if($campaign){
+                        Campaign::where("id", $donation->campaignId)->update([
+                            "totalTip" => $campaign->totalTip + $donation->tip,
+                            "totalRaised" => $campaign->totalRaised + $donation->amount,
+                            "balance" => $campaign->balance + $donation->amount,
+                            "totalDonation" => $campaign->totalDonation + 1
+                        ]);
+                    }
+
+                    $user = User::where("id", $donation->donorId)->first();
+                    if($user) {
+                        User::where("id", $donation->donorId)->update([
+                            "totalDonation" => $user->totalDonation + ($donation->tip + $donation->amount)
+                        ]);
+                        Feed::create([
+                            "creatorId" => $user->id,
+                            "feedType" => "DONATION",
+                            "campaignId" => $donation->campaignId ? $donation->campaignId : 0,
+                            "donationId" => $donation->id,
+                            "publishedAt" => Carbon::now()
+                        ]);
+                    }
+
+                    $notification = $this->sentNotification($donation, $user, $campaign);
+                    
+                    if(!$notification->status){
+                        return response()->json([
+                            "message" => "Sent Notification Fail",
+                            "error" => $notification->message,
+                            "status" => "fail"
+                        ], 200);
+                    }
+                    
+                    Log::alert("Update Donation{$transactionId} Success.");
+                }
+            });
+        } catch (Exception $th) {
+            Log::alert("Update Order Fail: " + $th->getMessage());
+        }
     }
 
     public function listAllDonations(Request $request)

@@ -18,7 +18,10 @@ class Donation extends Model
         "paymentMethod",
         "note",
         "isConfirmAgreement",
-        "donationDate"
+        "donationDate",
+        "paymentStatus",
+        "requestTime",
+        "transactionId"
     ];
 
     public function campaign() {

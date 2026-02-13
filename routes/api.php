@@ -250,6 +250,7 @@ Route::prefix('/web')->group(function () {
         Route::post("/send-email", [Website\ContactController::class, "sendingEmail"]);
     });
     Route::get("/term-condition", [Website\TermConditionController::class, "termConditionPage"]);
+    Route::get("/update-donation/{transactionId}", [Website\DonationController::class, "checkOrder"]);
     Route::get("/donation-term", [Website\TermConditionController::class, "termDonationPage"]);
     Route::get("/privacy-policy", [Website\PrivacyPolicyController::class, "privacyPolicyPage"]);
     Route::get("/page-banner", [Website\WebPageController::class, "pageBanner"]);
