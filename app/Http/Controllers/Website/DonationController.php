@@ -66,7 +66,7 @@ class DonationController extends Controller
     {
         $transactionId = 'PAID' . round(microtime(true) * 1000);
         $req_time = round(microtime(true) * 1000);
-        $amount = number_format(request("total", 0), 2, '.', '');
+        $amount = number_format($request->total, 2, '.', '');
         $firstName = request("firstName", "");
         $lastName = request("lastName", "");
         $phone = request("receiverPhone", "");
