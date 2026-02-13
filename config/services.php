@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'payway' => [
+        'api_url' => env("PAYWAY_API_URL"),
+        'api_key' => env("PAYWAY_API_KEY"),
+        'api_merchant_id' => env("PAYWAY_MERCHANT_ID")
+    ],
+
 ];
