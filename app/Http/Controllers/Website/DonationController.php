@@ -68,8 +68,8 @@ class DonationController extends Controller
         $req_time = round(microtime(true) * 1000);
         $amount = number_format($request->total, 2, '.', '');
         $firstName = request("firstName", null);
-        $lastName = request("lastName", null);
-        $phone = request("receiverPhone", null);
+        $lastName = request("lastName", "none");
+        $phone = request("receiverPhone", "none");
         $payment_option = $request->paymentOption; #abapay_khqr, cards
 
         $item = [
