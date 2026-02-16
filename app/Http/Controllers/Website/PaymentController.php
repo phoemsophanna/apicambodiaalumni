@@ -35,4 +35,39 @@ class PaymentController extends Controller
             'view_type' => 'popup'
         ];
     }
+
+    public static function checkTransaction($req_time, $tran_id)
+    {
+        $merchant_id = config('services.payway.api_merchant_id');
+        $b4hash = $req_time . $merchant_id . $tran_id;
+        $key = config('services.payway.api_key');
+        $hash = base64_encode(hash_hmac('sha512', $b4hash, $key, true));
+        $api = config('services.payway.api_url');
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $api.'/api/payment-gateway/v1/payments/check-transaction-2',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+            "req_time": "' . $req_time . '",
+            "merchant_id": "' . $merchant_id . '",
+            "tran_id": "' . $tran_id . '",
+            "hash": "' . $hash . '"
+        }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        return json_decode($response);
+    }
 }
