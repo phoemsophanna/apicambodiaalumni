@@ -13,7 +13,7 @@ class PaymentController extends Controller
         $key = config('services.payway.api_key');
         $merchant_id = config('services.payway.api_merchant_id');
         // $hash_str = $req_time . $merchant_id . $transactionId . $amount . $firstName . $lastName . $phone . $payment_option . $return_url . $continue_success_url . $currency;
-        $hash_str = $req_time . $merchant_id . $transactionId . $amount . $firstName . $lastName . $phone . $payment_option . $return_url . $continue_success_url . $currency;
+        $hash_str = $req_time . $merchant_id . $transactionId . $amount . $firstName . $lastName . $payment_option . $return_url . $continue_success_url . $currency;
         $hash = base64_encode(hash_hmac('sha512', $hash_str, $key, true));
         
         return [
