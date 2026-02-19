@@ -9,7 +9,7 @@ use App\Models\Campaign;
 
 class DonationService
 {
-    public function approved($id)
+    public static function approved($id)
     {
         try {
             DB::transaction(function () use ($id) {
