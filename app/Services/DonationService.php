@@ -19,10 +19,12 @@ class DonationService
                 $donation = Donation::where('id', $id)->where("paymentStatus", "!=", "APPROVED")->first();
                 if ($donation) {
                     $value = self::getTransactionDetail($donation->requestTime, $donation->transactionId);
+                    $payment_type = self::checkPaymentType($value->payment_type);
                     $donation->paymentStatus = "APPROVED";
+                    $donation->paymentMethod = $payment_type;
                     $donation->save();
 
-                    Log::alert("Transaction Detail: {$value}");
+                    Log::alert("Transaction Detail: {$payment_type}");
 
                     $campaign = Campaign::where("id", $donation->campaignId)->first();
                     if($campaign){
@@ -135,6 +137,29 @@ class DonationService
         $response = curl_exec($curl);
 
         curl_close($curl);
-        return $response;
+        return json_decode($response);
+    }
+
+    private static function checkPaymentType($type) {
+        $payment_type = "ABA KHQR";
+        switch($value->payment_type) {
+            case "ABA Pay":
+                $payment_type = "ABA KHQR";
+                break;
+            case "VISA":
+                $payment_type = "Visa card";
+                break;
+            case "MC":
+                $payment_type = "Mastercard";
+                break;
+            case "JCB":
+                $payment_type = "JCB card";
+                break;
+            case "CUP":
+                $payment_type = "UPI card";
+                break;
+            default: 
+                $payment_type = "ABA KHQR";
+        }
     }
 }
