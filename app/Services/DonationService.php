@@ -45,7 +45,7 @@ class DonationService
                         ]);
                     }
 
-                    // $notification = $this->sentNotification($donation, $user, $campaign);
+                    $notification = self->sentNotification($donation, $user, $campaign);
                     
                     if(!$notification->status){
                         return response()->json([
