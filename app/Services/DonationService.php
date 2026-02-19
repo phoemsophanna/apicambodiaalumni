@@ -19,7 +19,6 @@ class DonationService
                 $donation = Donation::where('id', $id)->where("paymentStatus", "!=", "APPROVED")->first();
                 if ($donation) {
                     $value = self::getTransactionDetail($donation->requestTime, $donation->transactionId);
-                    Log::alert("Transaction Detail: {$value->data->payment_type}");
                     $payment_type = self::checkPaymentType($value->data->payment_type);
                     $donation->paymentStatus = "APPROVED";
                     $donation->paymentMethod = $payment_type;
