@@ -22,6 +22,8 @@ class DonationService
                     $donation->paymentStatus = "APPROVED";
                     $donation->save();
 
+                    Log::alert("Transaction Detail: {json_encode($value)}");
+
                     $campaign = Campaign::where("id", $donation->campaignId)->first();
                     if($campaign){
                         Campaign::where("id", $donation->campaignId)->update([
