@@ -30,6 +30,7 @@ class CheckTransaction extends Command
     public function handle()
     {
         $orders = Donation::select("id", "transactionId", "requestTime", "created_at")->where("paymentStatus", "DRAFT")->where('created_at', '>=', Carbon::now()->subMinutes(5))->get();
+        Log::info("Alert Transactions ");
         foreach ($orders as $key => $order) {
             Log::info("Current Date: " . Carbon::now() . "Order Date: " . Carbon::parse($order->created_at));
             $transaction = PaymentController::checkTransaction($order->requestTime, $order->transactionId);
