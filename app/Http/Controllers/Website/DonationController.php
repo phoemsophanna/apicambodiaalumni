@@ -122,7 +122,6 @@ class DonationController extends Controller
 
     public function checkOrder($transactionId)
     {
-        Log::info("TransactionId: " . $transactionId);
         try {
             DB::transaction(function () use ($transactionId) {
                 $donation = Donation::where('transactionId', $transactionId)->where("paymentStatus", "!=", "APPROVED")->first();

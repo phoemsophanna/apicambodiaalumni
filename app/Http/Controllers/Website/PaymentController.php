@@ -70,4 +70,59 @@ class PaymentController extends Controller
         curl_close($curl);
         return json_decode($response);
     }
+
+    // public function getOrderTransactionDetail($orderNumber)
+    // {
+    //     $productOrder = ProductOrder::where('orderNumber', $orderNumber)->first();
+    //     if ($productOrder) {
+    //         $transaction = $this->getTransactionDetail($productOrder->requestTime, $productOrder->transactionId);
+    //         return response()->json([
+    //             'message' => 'Get Detail',
+    //             'status' => 200,
+    //             'data' => $transaction->status,
+    //             'transaction' => $transaction
+    //         ]);
+    //     }
+
+    //     return response()->json([
+    //         'message' => 'Get Detail',
+    //         'status' => 404,
+    //         'data' => null
+    //     ]);
+    // }
+
+    // public static function getTransactionDetail($req_time, $tran_id)
+    // {
+    //     $merchant_id = getenv('ABA_PAYWAY_MERCHANT_ID') ? getenv('ABA_PAYWAY_MERCHANT_ID') : config('services.payway.api_merchant_id');
+    //     $b4hash = $req_time . $merchant_id . $tran_id;
+    //     $key = getenv('ABA_PAYWAY_API_KEY') ? getenv('ABA_PAYWAY_API_KEY') : config('services.payway.api_key');
+    //     $hash = base64_encode(hash_hmac('sha512', $b4hash, $key, true));
+    //     $api = getenv('ABA_PAYWAY_API_URL') ? getenv('ABA_PAYWAY_API_URL') : config('services.payway.api_url');
+    //     $curl = curl_init();
+
+    //     curl_setopt_array($curl, array(
+    //         CURLOPT_URL => $api.'/api/payment-gateway/v1/payments/transaction-detail',
+    //         CURLOPT_RETURNTRANSFER => true,
+    //         CURLOPT_ENCODING => '',
+    //         CURLOPT_MAXREDIRS => 10,
+    //         CURLOPT_TIMEOUT => 0,
+    //         CURLOPT_FOLLOWLOCATION => true,
+    //         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    //         CURLOPT_CUSTOMREQUEST => 'POST',
+    //         CURLOPT_POSTFIELDS => '{
+    //         "req_time": "' . $req_time . '",
+    //         "merchant_id": "' . $merchant_id . '",
+    //         "tran_id": "' . $tran_id . '",
+    //         "hash": "' . $hash . '"
+    //     }',
+    //         CURLOPT_HTTPHEADER => array(
+    //             'Content-Type: application/json'
+    //         ),
+    //     ));
+
+    //     $response = curl_exec($curl);
+
+    //     curl_close($curl);
+    //     return json_decode($response);
+    // }
 }
