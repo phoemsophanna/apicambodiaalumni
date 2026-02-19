@@ -110,6 +110,7 @@ class DonationService
         $key = config('services.payway.api_key');
         $hash = base64_encode(hash_hmac('sha512', $b4hash, $key, true));
         $api = config('services.payway.api_url');
+        $curl = curl_init();
 
         curl_setopt_array($curl, array(
             CURLOPT_URL => $api.'/api/payment-gateway/v1/payments/transaction-detail',
