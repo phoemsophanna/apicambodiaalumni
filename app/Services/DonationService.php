@@ -19,12 +19,12 @@ class DonationService
                 $donation = Donation::where('id', $id)->where("paymentStatus", "!=", "APPROVED")->first();
                 if ($donation) {
                     $value = self::getTransactionDetail($donation->requestTime, $donation->transactionId);
-                    $payment_type = self::checkPaymentType($value['payment_type']);
+                    $payment_type = self::checkPaymentType($value->payment_type);
+                    Log::alert("Transaction Detail: {$payment_type}");
                     $donation->paymentStatus = "APPROVED";
                     $donation->paymentMethod = $payment_type;
                     $donation->save();
 
-                    Log::alert("Transaction Detail: {$payment_type}");
 
                     $campaign = Campaign::where("id", $donation->campaignId)->first();
                     if($campaign){
@@ -142,7 +142,7 @@ class DonationService
 
     private static function checkPaymentType($type) {
         $payment_type = "ABA KHQR";
-        switch($value->payment_type) {
+        switch($type) {
             case "ABA Pay":
                 $payment_type = "ABA KHQR";
                 break;
