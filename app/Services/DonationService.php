@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
-use App\Controllers\Website\DonationController;
+use App\Http\Controllers\Website\DonationController;
 use App\Models\Donation;
 
 class DonationService
