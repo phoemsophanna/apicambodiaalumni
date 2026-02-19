@@ -24,7 +24,7 @@ class FeedController extends Controller
             $campaign->campaignGallery = json_decode($campaign->campaignGallery);
             $feed->campaign = $campaign;
             $feed->creator = User::select("id", "name", "image")->where("id", $feed->creatorId)->first();
-            $feed->donation = Donation::where("id", $feed->donationId)->first();
+            $feed->donation = Donation::where("id", $feed->donationId)->where("paymentStatus" != "DRAFT")->first();
             $feed->publishedAt = Carbon::parse($feed->publishedAt)->format('jS F, Y | H:i A');
         });
         return response()->json($feeList->items());

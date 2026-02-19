@@ -108,7 +108,7 @@ class WithdrawController extends Controller
         $campaign->startDate = Carbon::parse($campaign->StartDate)->format('F jS, Y');
         $campaign->endDate = Carbon::parse($campaign->endDate)->format('F jS, Y');
         $campaign->creator = User::select("id", "name", "email", "phoneNumber")->where("id", $campaign->creatorId)->first();
-        $donations = Donation::where("campaignId", $campaign->id)->orderBy("id", "DESC")->get();
+        $donations = Donation::where("campaignId", $campaign->id)->where("paymentStatus" != "DRAFT")->orderBy("id", "DESC")->get();
         $donations->each(function($query) {
             $query->donor = User::select("id", "name", "image", "email", "phoneNumber")->where("id", $query->donorId)->first();
         });
