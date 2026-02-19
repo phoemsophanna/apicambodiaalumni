@@ -19,7 +19,7 @@ class DonationService
                 $donation = Donation::where('id', $id)->where("paymentStatus", "!=", "APPROVED")->first();
                 if ($donation) {
                     $value = self::getTransactionDetail($donation->requestTime, $donation->transactionId);
-                    $payment_type = self::checkPaymentType($value->payment_type);
+                    $payment_type = self::checkPaymentType($value['payment_type']);
                     $donation->paymentStatus = "APPROVED";
                     $donation->paymentMethod = $payment_type;
                     $donation->save();
