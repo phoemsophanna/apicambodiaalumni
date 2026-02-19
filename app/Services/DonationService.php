@@ -55,7 +55,7 @@ class DonationService
                         ], 200);
                     }
                     
-                    Log::alert("Update Donation{$transactionId} Success.");
+                    Log::alert("Update Donation{$donation->transactionId} Success.");
                 }
             });
         } catch (Exception $th) {
