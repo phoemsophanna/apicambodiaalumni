@@ -59,7 +59,7 @@ class DonationService
                 }
             });
         } catch (Exception $th) {
-            Log::alert("Update Order Fail: " + $th->getMessage());
+            Log::alert("Update Order Fail: {$th->getMessage()}");
         }
     }
 
