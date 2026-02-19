@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Website\PaymentController;
 use App\Models\Donation;
+use App\Services\DonationService;
 
 class CheckTransaction extends Command
 {
@@ -45,8 +46,7 @@ class CheckTransaction extends Command
                 Log::alert("Reach request limit: ", (array)$transaction);
             } else if ($transaction->status->code == '00') {
                 if ($transaction->data->payment_status_code == 0) {
-                    // OrderService::approveOrder($order->id);
-                    Log::info("Alert Transactions " . json_encode($transaction->data));
+                    DonationService::approved($order->id);
                 }
                 if ($transaction->data->payment_status_code == 2) {
                     Log::alert("Transaction is PENDING: ", (array)$transaction);
