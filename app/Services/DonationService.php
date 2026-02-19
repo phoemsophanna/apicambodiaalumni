@@ -138,6 +138,7 @@ class DonationService
         $response = curl_exec($curl);
 
         curl_close($curl);
+        Log::alert($response);
         return json_decode($response);
     }
 
