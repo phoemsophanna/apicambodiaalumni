@@ -19,8 +19,8 @@ class DonationService
                 $donation = Donation::where('id', $id)->where("paymentStatus", "!=", "APPROVED")->first();
                 if ($donation) {
                     $value = self::getTransactionDetail($donation->requestTime, $donation->transactionId);
-                    // Log::alert("Transaction Detail: {$value->payment_type}");
-                    // $payment_type = self::checkPaymentType($value->payment_type);
+                    Log::alert("Transaction Detail: {$value->data->payment_type}");
+                    $payment_type = self::checkPaymentType($value->data->payment_type);
                     $payment_type = "ABA KHQR";
                     $donation->paymentStatus = "APPROVED";
                     $donation->paymentMethod = $payment_type;
@@ -138,7 +138,6 @@ class DonationService
         $response = curl_exec($curl);
 
         curl_close($curl);
-        Log::alert($response);
         return json_decode($response);
     }
 
