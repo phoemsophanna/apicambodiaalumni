@@ -120,7 +120,7 @@ class DonationController extends Controller
         ], 200);
     }
 
-    public function checkOrder($transactionId)
+    public static function checkOrder($transactionId)
     {
         try {
             DB::transaction(function () use ($transactionId) {
