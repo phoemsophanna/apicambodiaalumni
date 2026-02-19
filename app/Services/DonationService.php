@@ -22,7 +22,7 @@ class DonationService
                     $donation->paymentStatus = "APPROVED";
                     $donation->save();
 
-                    Log::alert("Transaction Detail: {json_encode($value)}");
+                    Log::alert("Transaction Detail: {$value}");
 
                     $campaign = Campaign::where("id", $donation->campaignId)->first();
                     if($campaign){
@@ -135,6 +135,6 @@ class DonationService
         $response = curl_exec($curl);
 
         curl_close($curl);
-        return json_decode($response);
+        return $response;
     }
 }
