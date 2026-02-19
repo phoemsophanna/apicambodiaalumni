@@ -161,5 +161,7 @@ class DonationService
             default: 
                 $payment_type = "ABA KHQR";
         }
+
+        return $payment_type;
     }
 }
