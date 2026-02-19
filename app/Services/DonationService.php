@@ -21,7 +21,6 @@ class DonationService
                     $value = self::getTransactionDetail($donation->requestTime, $donation->transactionId);
                     Log::alert("Transaction Detail: {$value->data->payment_type}");
                     $payment_type = self::checkPaymentType($value->data->payment_type);
-                    $payment_type = "ABA KHQR";
                     $donation->paymentStatus = "APPROVED";
                     $donation->paymentMethod = $payment_type;
                     $donation->save();
