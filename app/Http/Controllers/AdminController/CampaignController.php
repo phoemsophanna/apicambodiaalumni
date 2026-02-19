@@ -200,7 +200,7 @@ class CampaignController extends Controller
         // $model->startDate = Carbon::parse($model->StartDate)->format('F jS, Y');
         // $model->endDate = Carbon::parse($model->endDate)->format('F jS, Y');
         $model->creator = User::select("id", "name", "email", "phoneNumber")->where("id", $model->creatorId)->first();
-        $donations = Donation::where("campaignId", $model->id)->where("paymentStatus" != "DRAFT")->orderBy("id", "DESC")->get();
+        $donations = Donation::where("campaignId", $model->id)->where("paymentStatus", "!=" , "DRAFT")->orderBy("id", "DESC")->get();
         $donations->each(function($query) {
             $query->donor = User::select("id", "name", "image", "email", "phoneNumber")->where("id", $query->donorId)->first();
         });

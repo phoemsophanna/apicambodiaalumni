@@ -18,12 +18,12 @@ class DonationController extends Controller
     public function topDonation()
     {
         $donors = User::where("totalDonation", ">", 0)->select("id", "name", "image", "totalDonation", "loginWith")->orderBy("totalDonation", "DESC")->limit(9)->get();
-        $donations = Donation::where("donorId", null)->where("paymentStatus" != "DRAFT")->get();
+        $donations = Donation::where("donorId", null)->where("paymentStatus", "!=" , "DRAFT")->get();
         $donations->each(function($query) use ($donors) {
             $donors->push(new User(["id" => 1, "name" => "Anonymous", "image" => null, "totalDonation" => $query->amount, "loginWith" => null]));
         });
         $donors->each(function($donor) {
-            $donor->totalProjects = Donation::where("donorId", $donor->id)->where("paymentStatus" != "DRAFT")->distinct("campaignId")->count();
+            $donor->totalProjects = Donation::where("donorId", $donor->id)->where("paymentStatus", "!=" , "DRAFT")->distinct("campaignId")->count();
             $donor->loginBy = $donor->loginWith;
         });
         return response()->json($donors);
@@ -31,34 +31,34 @@ class DonationController extends Controller
     public function donationList()
     {
         $donors = User::where("totalDonation", ">", 0)->select("id", "name", "image", "totalDonation", "loginWith")->orderBy("totalDonation", "DESC")->get();
-        $donations = Donation::where("donorId", null)->where("paymentStatus" != "DRAFT")->get();
+        $donations = Donation::where("donorId", null)->where("paymentStatus", "!=" , "DRAFT")->get();
         $donations->each(function($query) use ($donors) {
             $donors->push(new User(["id" => 1, "name" => "Anonymous", "image" => null, "totalDonation" => $query->amount, "loginWith" => null]));
         });
         $donors->each(function($donor) {
-            $donor->totalProjects = Donation::where("donorId", $donor->id)->where("paymentStatus" != "DRAFT")->distinct("campaignId")->count();
+            $donor->totalProjects = Donation::where("donorId", $donor->id)->where("paymentStatus", "!=" , "DRAFT")->distinct("campaignId")->count();
             $donor->loginBy = $donor->loginWith;
         });
         return response()->json($donors);
     }
 
     public function donorList() {
-        $donor = Donation::where("paymentStatus" != "DRAFT")->orderBy('id','desc')->get();
+        $donor = Donation::where("paymentStatus", "!=" , "DRAFT")->orderBy('id','desc')->get();
         $donor->each(function($q) {
             $q['user'] = User::where("id", $q->donorId)->first();
         });
-        $total = Donation::where("paymentStatus" != "DRAFT")->sum('amount');
+        $total = Donation::where("paymentStatus", "!=" , "DRAFT")->sum('amount');
 
         return response()->json(["donors" => $donor, "total" => $total]);
     }
 
     public function donorListUser($id) {
-        $donor = Donation::where("donorId", $id)->where("paymentStatus" != "DRAFT")->orderBy('id','desc')->get();
+        $donor = Donation::where("donorId", $id)->where("paymentStatus", "!=" , "DRAFT")->orderBy('id','desc')->get();
         $donor->each(function($q) {
             $q->campaign = $q->campaign ? $q->campaign : [];
             $q->date = Carbon::parse($q->donationDate)->format("d M Y");
         });
-        $total = Donation::where("donorId", $id)->where("paymentStatus" != "DRAFT")->sum('amount');
+        $total = Donation::where("donorId", $id)->where("paymentStatus", "!=" , "DRAFT")->sum('amount');
 
         return response()->json(["donors" => $donor, "total" => $total]);
     }
@@ -173,7 +173,7 @@ class DonationController extends Controller
 
     public function listAllDonations(Request $request)
     {
-        $donations = Donation::orderBy("created_at", "DESC")->where("paymentStatus" != "DRAFT")->paginate(request("limit", 10));
+        $donations = Donation::orderBy("created_at", "DESC")->where("paymentStatus", "!=" , "DRAFT")->paginate(request("limit", 10));
         $donations->each(function ($donation) {
             $donation->donor =  User::select("id", "name", "image")->where("id", $donation->donorId)->first();
             $donation->dayPass = Carbon::parse($donation->donationDate)->diffForHumans();

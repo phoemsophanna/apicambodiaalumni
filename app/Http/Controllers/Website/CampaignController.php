@@ -65,7 +65,7 @@ class CampaignController extends Controller
 
     public function getAllDonorByCampaign($campaignId)
     {
-        $donations = Donation::where("campaignId", $campaignId)->where("paymentStatus" != "DRAFT")->orderBy("created_at", "DESC")->get();
+        $donations = Donation::where("campaignId", $campaignId)->where("paymentStatus", "!=" , "DRAFT")->orderBy("created_at", "DESC")->get();
         $donations->each(function ($donation) {
             $donation->donor =  User::select("id", "name", "image")->where("id", $donation->donorId)->first();
             $donation->dayPass = Carbon::parse($donation->donationDate)->diffForHumans();
