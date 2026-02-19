@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Donation;
 use App\Models\User;
 use App\Models\Campaign;
+use App\Models\Feed;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Exception;
@@ -16,7 +17,7 @@ class DonationService
     {
         try {
             DB::transaction(function () use ($id) {
-                $donation = Donation::where('id', $id)->where("paymentStatus", "!=", "APPROVED")->first();
+                $donation = Donation::where('id', $id)->where("paymentStatus", "!=", "APPROVED")->lockForUpdate()->first();
                 if ($donation) {
                     $value = self::getTransactionDetail($donation->requestTime, $donation->transactionId);
                     $payment_type = self::checkPaymentType($value->data->payment_type);

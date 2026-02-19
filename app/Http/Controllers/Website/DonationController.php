@@ -124,7 +124,7 @@ class DonationController extends Controller
     {
         try {
             DB::transaction(function () use ($transactionId) {
-                $donation = Donation::where('transactionId', $transactionId)->where("paymentStatus", "!=", "APPROVED")->first();
+                $donation = Donation::where('transactionId', $transactionId)->where("paymentStatus", "!=", "APPROVED")->lockForUpdate()->first();
                 if ($donation) {
                     $donation->paymentStatus = "APPROVED";
                     $donation->save();
