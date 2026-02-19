@@ -55,7 +55,7 @@ class DonationService
                         ], 200);
                     }
                     
-                    Log::alert("Update Donation{$donation->transactionId} Success.");
+                    Log::alert("Update Donation {$donation->transactionId} Success.");
                 }
             });
         } catch (Exception $th) {
@@ -68,7 +68,7 @@ class DonationService
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                // CURLOPT_URL => "https://api.telegram.org/bot8590989809:AAEuh7sDgw5alUoQv76QzdOfYbJ2BCqGITo/sendMessage",
+                CURLOPT_URL => "https://api.telegram.org/bot8590989809:AAEuh7sDgw5alUoQv76QzdOfYbJ2BCqGITo/sendMessage",
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
