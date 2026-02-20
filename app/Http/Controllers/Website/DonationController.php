@@ -126,7 +126,10 @@ class DonationController extends Controller
             DB::transaction(function () use ($transactionId) {
                 $donation = Donation::where('transactionId', $transactionId)->where("paymentStatus", "!=", "APPROVED")->lockForUpdate()->first();
                 if ($donation) {
+                    $value = $this->getTransactionDetail($donation->requestTime, $donation->transactionId);
+                    $payment_type = $this->checkPaymentType($value->data->payment_type);
                     $donation->paymentStatus = "APPROVED";
+                    $donation->paymentMethod = $payment_type;
                     $donation->save();
 
                     $campaign = Campaign::where("id", $donation->campaignId)->first();
@@ -217,5 +220,65 @@ class DonationController extends Controller
             return (object)['message' => $th->getMessage(), "status" => false];
         }
         return (object)["status" => true];
+    }
+
+    public static function getTransactionDetail($req_time, $tran_id)
+    {
+        $merchant_id = config('services.payway.api_merchant_id');
+        $b4hash = $req_time . $merchant_id . $tran_id;
+        $key = config('services.payway.api_key');
+        $hash = base64_encode(hash_hmac('sha512', $b4hash, $key, true));
+        $api = config('services.payway.api_url');
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $api.'/api/payment-gateway/v1/payments/transaction-detail',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+            "req_time": "' . $req_time . '",
+            "merchant_id": "' . $merchant_id . '",
+            "tran_id": "' . $tran_id . '",
+            "hash": "' . $hash . '"
+        }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        return json_decode($response);
+    }
+
+    private static function checkPaymentType($type) {
+        $payment_type = "ABA KHQR";
+        switch($type) {
+            case "ABA Pay":
+                $payment_type = "ABA KHQR";
+                break;
+            case "VISA":
+                $payment_type = "Visa card";
+                break;
+            case "MC":
+                $payment_type = "Mastercard";
+                break;
+            case "JCB":
+                $payment_type = "JCB card";
+                break;
+            case "CUP":
+                $payment_type = "UPI card";
+                break;
+            default: 
+                $payment_type = "ABA KHQR";
+        }
+
+        return $payment_type;
     }
 }
