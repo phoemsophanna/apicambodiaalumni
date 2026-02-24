@@ -19,10 +19,10 @@ class DonationService
             DB::transaction(function () use ($id) {
                 $donation = Donation::where('id', $id)->where("paymentStatus", "!=", "APPROVED")->lockForUpdate()->first();
                 if ($donation) {
-                    $value = self::getTransactionDetail($donation->requestTime, $donation->transactionId);
-                    $payment_type = self::checkPaymentType($value->data->payment_type);
+                    // $value = self::getTransactionDetail($donation->requestTime, $donation->transactionId);
+                    // $payment_type = self::checkPaymentType($value->data->payment_type);
                     $donation->paymentStatus = "APPROVED";
-                    $donation->paymentMethod = $payment_type;
+                    // $donation->paymentMethod = $payment_type;
                     $donation->save();
 
 

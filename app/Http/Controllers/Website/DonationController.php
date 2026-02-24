@@ -72,6 +72,10 @@ class DonationController extends Controller
         $lastName = request("lastName", "none");
         $phone = request("receiverPhone", "none");
         $payment_option = $request->paymentOption; #abapay_khqr, cards
+        $paymentMethod = "ABA KHQR";
+        if($payment_option == "cards"){
+            $paymentMethod = "Credit/Debit Card";
+        }
 
         $item = [
             "campaignId" => request("campaignId", 0),
@@ -80,7 +84,7 @@ class DonationController extends Controller
             "amount" => request("amount", 0),
             "tip" => request("tip", 0),
             "total" => request("total", 0),
-            "paymentMethod" => request("paymentMethod", null),
+            "paymentMethod" => $paymentMethod,
             "note" => request("note", null),
             "isConfirmAgreement" => request("isConfirmAgreement", false),
             "donationDate" => Carbon::now(),
@@ -126,10 +130,7 @@ class DonationController extends Controller
             DB::transaction(function () use ($transactionId) {
                 $donation = Donation::where('transactionId', $transactionId)->where("paymentStatus", "!=", "APPROVED")->lockForUpdate()->first();
                 if ($donation) {
-                    $value = $this->getTransactionDetail($donation->requestTime, $donation->transactionId);
-                    $payment_type = $this->checkPaymentType($value->data->payment_type);
                     $donation->paymentStatus = "APPROVED";
-                    $donation->paymentMethod = $payment_type;
                     $donation->save();
 
                     $campaign = Campaign::where("id", $donation->campaignId)->first();
@@ -255,30 +256,5 @@ class DonationController extends Controller
 
         curl_close($curl);
         return json_decode($response);
-    }
-
-    private static function checkPaymentType($type) {
-        $payment_type = "ABA KHQR";
-        switch($type) {
-            case "ABA Pay":
-                $payment_type = "ABA KHQR";
-                break;
-            case "VISA":
-                $payment_type = "Visa card";
-                break;
-            case "MC":
-                $payment_type = "Mastercard";
-                break;
-            case "JCB":
-                $payment_type = "JCB card";
-                break;
-            case "CUP":
-                $payment_type = "UPI card";
-                break;
-            default: 
-                $payment_type = "ABA KHQR";
-        }
-
-        return $payment_type;
     }
 }
