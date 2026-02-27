@@ -9,6 +9,7 @@ use App\Models\CampaignCategory;
 use App\Models\News;
 use App\Models\Partner;
 use App\Models\SiteSetting;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -121,6 +122,11 @@ class HomepageController extends Controller
             "news" => $news,
             "newsList" => $newsList
         ]);
+    }
+
+    public function countMember() {
+        $count = User::where('isMember',1)->count();
+        return response()->json(['count' => $count]);
     }
 
     public function partners()

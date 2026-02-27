@@ -257,6 +257,7 @@ Route::prefix('/web')->group(function () {
 });
 
 Route::post("/sending-email", [WebPageController::class, "sendingEmail"]);
+Route::post("/member-count", [Website\HomepageController::class, "countMember"]);
 
 // Website Private
 // User Dashboard
